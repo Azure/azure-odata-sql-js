@@ -9,10 +9,8 @@
   "scripts": {
     "test": "npm run lint & mocha",
     "lint": "jshint src"
-},
-  "dependencies": {
-      "azure-query-js": "Azure/queryjs"
   },
+  "dependencies": { },
   "devDependencies": {
     "chai": "^3.0.0",
     "jshint": "^2.9.1",
