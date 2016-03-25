@@ -10,7 +10,9 @@
     "test": "npm run lint & mocha",
     "lint": "jshint src"
   },
-  "dependencies": { },
+  "dependencies": {
+    "mssql": "^2.1.5"
+  },
   "devDependencies": {
     "chai": "^3.0.0",
     "jshint": "^2.9.1",

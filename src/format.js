@@ -3,12 +3,12 @@
 // ----------------------------------------------------------------------------
 
 var types = require('./utilities/types'),
-    _ = require('underscore.string'),
+    util = require('util'),
     parseOData = require('./parseOData'),
     ExpressionVisitor = require('./ExpressionVisitor'),
     convertTypes = require('./convertTypes'),
     booleanize = require('./booleanize'),
-    helpers = require('../helpers'),
+    helpers = require('./helpers'),
     expressions = require('./expressions'),
     mssql = require('mssql');
 
@@ -105,9 +105,9 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
         var tableName = helpers.formatTableName(this.schemaName, query.table);
 
         if (this.flavor !== 'sqlite') {
-            formattedSql = _.sprintf("SELECT %s%s FROM %s%s%s", takeClause, selection, tableName, whereClause, orderbyClause);
+            formattedSql = util.format("SELECT %s%s FROM %s%s%s", takeClause, selection, tableName, whereClause, orderbyClause);
         } else {
-            formattedSql = _.sprintf("SELECT %s FROM %s%s%s%s%s", selection, tableName, whereClause, orderbyClause, takeClause, skipClause);
+            formattedSql = util.format("SELECT %s FROM %s%s%s%s%s", selection, tableName, whereClause, orderbyClause, takeClause, skipClause);
         }
 
         return formattedSql;
@@ -129,7 +129,7 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
 
         // Plug all the pieces into the template to get the paging sql
         var tableName = helpers.formatTableName(this.schemaName, query.table);
-        formattedSql = _.sprintf(
+        formattedSql = util.format(
             "SELECT %s FROM (SELECT ROW_NUMBER() OVER (ORDER BY %s) AS [ROW_NUMBER], %s " +
             "FROM %s WHERE %s) AS [t1] " +
             "WHERE [t1].[ROW_NUMBER] BETWEEN %d + 1 AND %d + %d " +
@@ -203,7 +203,7 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
 
         if (query.id !== undefined) {
             var id = this.tableConfig.hasStringId ? "'" + query.id.replace(/'/g, "''") + "'" : query.id;
-            var idFilterExpr = parseOData(_.sprintf('(id eq %s)', id));
+            var idFilterExpr = parseOData(util.format('(id eq %s)', id));
 
             // append the id filter to any existing filter
             if (filterExpr) {
@@ -216,7 +216,7 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
 
         // if soft delete is enabled filter out deleted records
         if (this.tableConfig.softDelete && !query.includeDeleted) {
-            var deletedFilter = parseOData(_.sprintf('(deleted eq false)'));
+            var deletedFilter = parseOData(util.format('(deleted eq false)'));
             if (filterExpr) {
                 filterExpr = new expressions.Binary(filterExpr, deletedFilter, 'And');
             }
@@ -381,7 +381,7 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
             this.visit(expr.operand);
         }
         else if (expr.expressionType == 'Convert') {
-            this.statement.sql += _.sprintf("CONVERT(%s, ", expr.desiredType);
+            this.statement.sql += util.format("CONVERT(%s, ", expr.desiredType);
             this.visit(expr.operand);
             this.statement.sql += ')';
         }

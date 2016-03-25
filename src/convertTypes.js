@@ -4,7 +4,6 @@
 
 var types = require('./utilities/types'),
     expressions = require('./expressions'),
-    _ = require('underscore'),
     ExpressionVisitor = require('./ExpressionVisitor');
 
 function ctor(tableMetadata) {
@@ -40,7 +39,7 @@ var TypeConverter = types.deriveClass(ExpressionVisitor, ctor, {
         return expr &&
                expr.expressionType === 'MemberAccess' &&
                types.isString(expr.member) && // tableConfig.binaryColumns is not currently used - hard coded __version column
-               (_.contains(this.tableMetadata.binaryColumns, expr.member.toLowerCase()) || expr.member.toLowerCase() === 'version');
+               ((this.tableMetadata.binaryColumns && this.tableMetadata.binaryColumns.indexOf(expr.member.toLowerCase()) > -1) || expr.member.toLowerCase() === 'version');
     }
 });
 
