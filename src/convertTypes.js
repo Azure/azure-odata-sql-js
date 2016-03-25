@@ -1,0 +1,49 @@
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+var types = require('./utilities/types'),
+    expressions = require('./expressions'),
+    _ = require('underscore'),
+    ExpressionVisitor = require('./ExpressionVisitor');
+
+function ctor(tableMetadata) {
+    this.tableMetadata = tableMetadata;
+}
+
+var TypeConverter = types.deriveClass(ExpressionVisitor, ctor, {
+    visitBinary: function (expr) {
+        var left = expr.left ? this.visit(expr.left) : null;
+        var right = expr.right ? this.visit(expr.right) : null;
+
+        if (this._isStringConstant(left) && this._isBinaryMemberAccess(right)) {
+            left.value = new Buffer(left.value, 'base64');
+        }
+        else if (this._isStringConstant(right) && this._isBinaryMemberAccess(left)) {
+            right.value = new Buffer(right.value, 'base64');
+        }
+
+        if (left != expr.left || right != expr.right) {
+            return new expressions.Binary(left, right, expr.expressionType);
+        }
+
+        return expr;
+    },
+
+    _isStringConstant: function(expr) {
+        return expr &&
+               expr.expressionType === 'Constant' &&
+               types.isString(expr.value);
+    },
+
+    _isBinaryMemberAccess: function (expr) {
+        return expr &&
+               expr.expressionType === 'MemberAccess' &&
+               types.isString(expr.member) && // tableConfig.binaryColumns is not currently used - hard coded __version column
+               (_.contains(this.tableMetadata.binaryColumns, expr.member.toLowerCase()) || expr.member.toLowerCase() === 'version');
+    }
+});
+
+module.exports = function (expr, tableMetadata) {
+    return new TypeConverter(tableMetadata).visit(expr);
+};

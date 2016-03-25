@@ -1,10 +1,10 @@
 // ----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // ----------------------------------------------------------------------------
-var parse = require('../../src/query/parseOData'),
+var parse = require('../src/parseOData'),
     equal = require('assert').equal;
 
-describe('azure-mobile-apps.query.parseOData', function () {
+describe('azure-odata-sql.parseOData', function () {
     it("basic parser test", function () {
         var result = parse("(user eq 'mathewc')");
 

@@ -1,10 +1,10 @@
 // ----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // ----------------------------------------------------------------------------
-var expressions = require('../../src/query/expressions'),
+var expressions = require('../src/expressions'),
     equal = require('assert').equal;
 
-describe('azure-mobile-apps.query.expressions', function () {
+describe('azure-odata-sql.expressions', function () {
     it("constant expression test", function () {
         var constExpr = new expressions.Constant('hello');
         equal(constExpr.value, 'hello');
