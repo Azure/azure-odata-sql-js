@@ -1,9 +1,11 @@
 # azure-odata-sql
 
-This library contains functionality to convert OData query strings into SQL
+This library contains functionality to convert OData queries into SQL
 statements.
 
 The library uses types from the `mssql` npm package to represent parameter types.
+The query object is in the format produced by
+[azure-query-js](https://github.com/Azure/queryjs).
 
 ## Installation
 
