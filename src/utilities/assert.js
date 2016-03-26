@@ -7,4 +7,4 @@ module.exports = {
         if(value === undefined || value === null)
             throw new Error(message);
     }
-}
+};

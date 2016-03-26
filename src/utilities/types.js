@@ -48,9 +48,9 @@ var types = module.exports = {
             for (var name in instanceMembers)
                 if(instanceMembers.hasOwnProperty(name))
                     // Check if we're overwriting an existing function
-                    prototype[name] = typeof instanceMembers[name] === 'function' && typeof basePrototype[name] === 'function'
-                        ? getPrototype(name, instanceMembers[name])
-                        : instanceMembers[name];
+                    prototype[name] = typeof instanceMembers[name] === 'function' && typeof basePrototype[name] === 'function' ?
+                        getPrototype(name, instanceMembers[name]) :
+                        instanceMembers[name];
 
         ctor = ctor ?
             (function (fn) {
@@ -122,4 +122,4 @@ var types = module.exports = {
         }
         return true;
     }
-}
+};
