@@ -105,4 +105,4 @@ var strings = module.exports = {
             return undefined;
         }
     }
-}
+};

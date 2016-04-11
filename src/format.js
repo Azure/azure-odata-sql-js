@@ -92,7 +92,7 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
             }
         }
 
-        var filter = this._formatFilter(query)
+        var filter = this._formatFilter(query);
         if (filter.length > 0) {
             whereClause = ' WHERE ' + filter;
         }

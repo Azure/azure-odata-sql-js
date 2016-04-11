@@ -4,12 +4,9 @@
 
 var types = require('./utilities/types'),
     strings = require('./utilities/strings'),
-    statementHelpers = require('./statementHelpers'),
     mssql = require('mssql');
 
 var helpers = module.exports = {
-    statements: statementHelpers,
-
     // Performs the following validations on the specified identifier:
     // - first char is alphabetic or an underscore
     // - all other characters are alphanumeric or underscore
@@ -143,7 +140,7 @@ var helpers = module.exports = {
             createdAt: 'createdAt DATETIMEOFFSET(7) NOT NULL DEFAULT CONVERT(DATETIMEOFFSET(7),SYSUTCDATETIME(),0)',
             updatedAt: 'updatedAt DATETIMEOFFSET(7) NOT NULL DEFAULT CONVERT(DATETIMEOFFSET(7),SYSUTCDATETIME(),0)',
             deleted: 'deleted bit NOT NULL DEFAULT 0'
-        }
+        };
     },
 
     getSystemProperties: function () {
