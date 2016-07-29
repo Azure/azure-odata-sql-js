@@ -476,7 +476,7 @@ describe('azure-odata-sql.sqlite', function () {
             table: 'products',
             filters: "length(concat(name, category)) gt 5"
         };
-        verifySqlFormatting(query, "SELECT * FROM [products] WHERE ((LEN((CONVERT(NVARCHAR(MAX), [name]) + [category]) + 'X') - 1) > @p1)");
+        verifySqlFormatting(query, "SELECT * FROM [products] WHERE ((LEN(([name] || [category]) + 'X') - 1) > @p1)");
     });
 
     it("string startswith", function () {
@@ -512,7 +512,7 @@ describe('azure-odata-sql.sqlite', function () {
             table: 'products',
             filters: "indexof(name, 'Abc') eq 5"
         };
-        var statements = verifySqlFormatting(query, "SELECT * FROM [products] WHERE ((PATINDEX('%' + @p1 + '%', [name]) - 1) = @p2)");
+        var statements = verifySqlFormatting(query, "SELECT * FROM [products] WHERE ((INSTR(@p1, [name]) - 1) = @p2)");
         equal(statements.length, 1);
         equal(statements[0].parameters[0].value, 'Abc');
         equal(statements[0].parameters[1].value, 5);
@@ -524,7 +524,7 @@ describe('azure-odata-sql.sqlite', function () {
             filters: "concat(concat(city, ', '), country) eq 'Berlin, Germany'"
         };
         var statements = verifySqlFormatting(query,
-            "SELECT * FROM [customers] WHERE ((CONVERT(NVARCHAR(MAX), (CONVERT(NVARCHAR(MAX), [city]) + @p1)) + [country]) = @p2)");
+            "SELECT * FROM [customers] WHERE ((([city] || @p1) || [country]) = @p2)");
         equal(statements.length, 1);
         equal(statements[0].parameters[0].value, ', ');
         equal(statements[0].parameters[1].value, 'Berlin, Germany');
@@ -549,14 +549,14 @@ describe('azure-odata-sql.sqlite', function () {
             table: 'books',
             filters: "substring(title, 1) eq 'he Rise and Fall of the Roman Empire'"
         };
-        var statements = verifySqlFormatting(query, "SELECT * FROM [books] WHERE (SUBSTRING([title], @p1 + 1, LEN([title])) = @p2)");
+        var statements = verifySqlFormatting(query, "SELECT * FROM [books] WHERE (SUBSTR([title], @p1 + 1, LEN([title])) = @p2)");
         equal(statements.length, 1);
         equal(statements[0].parameters[0].value, 1);
         equal(statements[0].parameters[1].value, 'he Rise and Fall of the Roman Empire');
 
         // second overload taking a length
         query.filters = "substring(title, 1, 10) eq 'he Rise and Fall of the Roman Empire'";
-        statements = verifySqlFormatting(query, "SELECT * FROM [books] WHERE (SUBSTRING([title], @p1 + 1, @p2) = @p3)");
+        statements = verifySqlFormatting(query, "SELECT * FROM [books] WHERE (SUBSTR([title], @p1 + 1, @p2) = @p3)");
         equal(statements.length, 1);
         equal(statements[0].parameters[0].value, 1);
         equal(statements[0].parameters[1].value, 10);
@@ -592,7 +592,7 @@ describe('azure-odata-sql.sqlite', function () {
             table: 'products',
             filters: "concat(name, 'Bar') eq 'FooBar'"
         };
-        var statements = verifySqlFormatting(query, "SELECT * FROM [products] WHERE ((CONVERT(NVARCHAR(MAX), [name]) + @p1) = @p2)");
+        var statements = verifySqlFormatting(query, "SELECT * FROM [products] WHERE (([name] || @p1) = @p2)");
         equal(statements.length, 1);
         equal(statements[0].parameters[0].value, 'Bar');
         equal(statements[0].parameters[1].value, 'FooBar');
