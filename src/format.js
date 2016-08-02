@@ -298,6 +298,13 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
                 case 'Or':
                     this.statement.sql += ' OR ';
                     break;
+                case 'Concat':
+                    if (this.flavor === 'sqlite') {
+                        this.statement.sql += ' || ';
+                    } else {
+                        this.statement.sql += ' + ';
+                    }
+                    break;
                 case 'Add':
                     this.statement.sql += ' + ';
                     break;
@@ -515,15 +522,18 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
             this.statement.sql += ')';
         }
         else if (functionName == 'concat') {
-            // Rewrite as an string addition with appropriate conversions.
-            // Note: due to sql operator precidence, we only need to inject a
-            // single conversion - the other will be upcast to string.
-            if (!isConstantOfType(args[0], 'string')) {
-                args[0] = new expressions.Convert(helpers.getSqlType(''), args[0]);
-            } else if (!isConstantOfType(args[1], 'string')) {
-                args[1] = new expressions.Convert(helpers.getSqlType(''), args[1]);
+            var concat;
+            if (this.flavor !== 'sqlite') {
+                // Rewrite as an string addition with appropriate conversions.
+                // Note: due to sql operator precidence, we only need to inject a
+                // single conversion - the other will be upcast to string.
+                if (!isConstantOfType(args[0], 'string')) {
+                    args[0] = new expressions.Convert(helpers.getSqlType(''), args[0]);
+                } else if (!isConstantOfType(args[1], 'string')) {
+                    args[1] = new expressions.Convert(helpers.getSqlType(''), args[1]);
+                }
             }
-            var concat = new expressions.Binary(args[0], args[1], 'Add');
+            var concat = new expressions.Binary(args[0], args[1], 'Concat');
             this.visit(concat);
         }
         else if (functionName == 'tolower') {
@@ -549,11 +559,19 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
             this.statement.sql += '))';
         }
         else if (functionName == 'indexof') {
-            this.statement.sql += "(PATINDEX('%' + ";
-            this.visit(args[0]);
-            this.statement.sql += " + '%', ";
-            this.visit(instance);
-            this.statement.sql += ') - 1)';
+            if (this.flavor === 'sqlite') {
+                this.statement.sql += "(INSTR(";
+                this.visit(args[0]);
+                this.statement.sql += ", ";
+                this.visit(instance);
+                this.statement.sql += ') - 1)';
+            } else {
+                this.statement.sql += "(PATINDEX('%' + ";
+                this.visit(args[0]);
+                this.statement.sql += " + '%', ";
+                this.visit(instance);
+                this.statement.sql += ') - 1)';
+            }
         }
         else if (functionName == 'replace') {
             this.statement.sql += "REPLACE(";
@@ -565,7 +583,11 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
             this.statement.sql += ')';
         }
         else if (functionName == 'substring') {
-            this.statement.sql += 'SUBSTRING(';
+            if (this.flavor === 'sqlite') {
+                this.statement.sql += 'SUBSTR(';
+            } else {
+                this.statement.sql += 'SUBSTRING(';
+            }
             this.visit(instance);
 
             this.statement.sql += ", ";
