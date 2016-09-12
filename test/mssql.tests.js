@@ -25,9 +25,10 @@ describe('azure-odata-sql.mssql', function () {
             skip: 500,
             take: null
         },
-            expectedSql = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY [Title]) AS [ROW_NUMBER], " +
-            "* FROM [testapp].[intIdMovies] WHERE ([Duration] = [Duration])) AS [t1] WHERE [t1].[ROW_NUMBER] " +
-            "BETWEEN 500 + 1 AND 500 + 9007199254740992 ORDER BY [t1].[ROW_NUMBER]";
+            expectedSql = "SELECT * " +
+            "FROM [testapp].[intIdMovies] WHERE ([Duration] = [Duration]) " +
+            "ORDER BY [Title] " + 
+            "OFFSET 500 ROWS FETCH NEXT 9007199254740992 ROWS ONLY";
 
         verifySqlFormatting(query, expectedSql);
     });
@@ -40,8 +41,7 @@ describe('azure-odata-sql.mssql', function () {
             includeTotalCount: true
         },
             expectedSql = [
-                "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY [id]) AS [ROW_NUMBER], * FROM [testapp].[intIdMovies] WHERE (1 = 1)) " +
-                    "AS [t1] WHERE [t1].[ROW_NUMBER] BETWEEN 10 + 1 AND 10 + 10 ORDER BY [t1].[ROW_NUMBER]",
+                "SELECT * FROM [testapp].[intIdMovies] WHERE (1 = 1) ORDER BY [id] OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY",
                 "SELECT COUNT(*) AS [count] FROM [testapp].[intIdMovies]"
             ];
 
@@ -67,7 +67,7 @@ describe('azure-odata-sql.mssql', function () {
                 filters: "(type eq 'psychology') and (price lt 25.00)",
                 skip: 4
             },
-            expectedSql = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY [id]) AS [ROW_NUMBER], * FROM [testapp].[books] WHERE (([type] = @p1) AND ([price] < @p2))) AS [t1] WHERE [t1].[ROW_NUMBER] BETWEEN 4 + 1 AND 4 + 9007199254740992 ORDER BY [t1].[ROW_NUMBER]";
+            expectedSql = "SELECT * FROM [testapp].[books] WHERE (([type] = @p1) AND ([price] < @p2)) ORDER BY [id] OFFSET 4 ROWS FETCH NEXT 9007199254740992 ROWS ONLY";
 
         verifySqlFormatting(query, expectedSql);
     });
@@ -123,7 +123,7 @@ describe('azure-odata-sql.mssql', function () {
                 skip: 4,
                 take: 4
             },
-            expectedSql = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY [id]) AS [ROW_NUMBER], * FROM [testapp].[checkins] WHERE ([deleted] = @p1)) AS [t1] WHERE [t1].[ROW_NUMBER] BETWEEN 4 + 1 AND 4 + 4 ORDER BY [t1].[ROW_NUMBER]";
+            expectedSql = "SELECT * FROM [testapp].[checkins] WHERE ([deleted] = @p1) ORDER BY [id] OFFSET 4 ROWS FETCH NEXT 4 ROWS ONLY";
 
         verifySqlFormatting(query, expectedSql, { hasStringId: true, softDelete: true });
     });
@@ -138,7 +138,7 @@ describe('azure-odata-sql.mssql', function () {
             inlineCount: 'allpages'
         };
         var expectedSql = [
-            "SELECT [t1].[ROW_NUMBER], [t1].[title], [t1].[type], [t1].[price] FROM (SELECT ROW_NUMBER() OVER (ORDER BY [id]) AS [ROW_NUMBER], [title], [type], [price] FROM [testapp].[books] WHERE (([type] = @p1) AND ([price] < @p2))) AS [t1] WHERE [t1].[ROW_NUMBER] BETWEEN 4 + 1 AND 4 + 4 ORDER BY [t1].[ROW_NUMBER]",
+            "SELECT [title], [type], [price] FROM [testapp].[books] WHERE (([type] = @p1) AND ([price] < @p2)) ORDER BY [id] OFFSET 4 ROWS FETCH NEXT 4 ROWS ONLY",
             "SELECT COUNT(*) AS [count] FROM [testapp].[books] WHERE (([type] = @p3) AND ([price] < @p4))"
         ];
 
@@ -656,7 +656,7 @@ describe('azure-odata-sql.mssql', function () {
             skip: 4,
             take: 4
         };
-        var expectedSql = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY [id]) AS [ROW_NUMBER], * FROM [testapp].[books] WHERE (1 = 1)) AS [t1] WHERE [t1].[ROW_NUMBER] BETWEEN 4 + 1 AND 4 + 4 ORDER BY [t1].[ROW_NUMBER]";
+        var expectedSql = "SELECT * FROM [testapp].[books] WHERE (1 = 1) ORDER BY [id] OFFSET 4 ROWS FETCH NEXT 4 ROWS ONLY";
         verifySqlFormatting(query, expectedSql);
     });
 
@@ -676,7 +676,7 @@ describe('azure-odata-sql.mssql', function () {
             skip: 4,
             take: 4
         };
-        var expectedSql = "SELECT [t1].[ROW_NUMBER], [t1].[title], [t1].[type], [t1].[price] FROM (SELECT ROW_NUMBER() OVER (ORDER BY [id]) AS [ROW_NUMBER], [title], [type], [price] FROM [testapp].[books] WHERE ([type] = @p1)) AS [t1] WHERE [t1].[ROW_NUMBER] BETWEEN 4 + 1 AND 4 + 4 ORDER BY [t1].[ROW_NUMBER]";
+        var expectedSql = "SELECT [title], [type], [price] FROM [testapp].[books] WHERE ([type] = @p1) ORDER BY [id] OFFSET 4 ROWS FETCH NEXT 4 ROWS ONLY";
         verifySqlFormatting(query, expectedSql);
     });
 
@@ -689,7 +689,7 @@ describe('azure-odata-sql.mssql', function () {
             skip: 4,
             take: 4
         };
-        var expectedSql = "SELECT [t1].[ROW_NUMBER], [t1].[title], [t1].[type], [t1].[price] FROM (SELECT ROW_NUMBER() OVER (ORDER BY [price] DESC) AS [ROW_NUMBER], [title], [type], [price] FROM [testapp].[books] WHERE ([type] = @p1)) AS [t1] WHERE [t1].[ROW_NUMBER] BETWEEN 4 + 1 AND 4 + 4 ORDER BY [t1].[ROW_NUMBER]";
+        var expectedSql = "SELECT [title], [type], [price] FROM [testapp].[books] WHERE ([type] = @p1) ORDER BY [price] DESC OFFSET 4 ROWS FETCH NEXT 4 ROWS ONLY";
         verifySqlFormatting(query, expectedSql);
     });
 

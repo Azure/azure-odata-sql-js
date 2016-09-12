@@ -114,14 +114,12 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
     },
 
     _formatPagedQuery: function (query) {
-        var formattedSql, selection = '',
-            aliasedSelection = '';
+        var formattedSql, selection = '';
 
         if (query.selections) {
             selection = this._formatSelection(query.selections);
-            aliasedSelection = '[t1].[ROW_NUMBER], ' + this._formatSelection(query.selections, '[t1].');
         } else {
-            selection = aliasedSelection = "*";
+            selection = "*";
         }
 
         var filter = this._formatFilter(query, '(1 = 1)');
@@ -130,11 +128,12 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
         // Plug all the pieces into the template to get the paging sql
         var tableName = helpers.formatTableName(this.schemaName, query.table);
         formattedSql = util.format(
-            "SELECT %s FROM (SELECT ROW_NUMBER() OVER (ORDER BY %s) AS [ROW_NUMBER], %s " +
-            "FROM %s WHERE %s) AS [t1] " +
-            "WHERE [t1].[ROW_NUMBER] BETWEEN %d + 1 AND %d + %d " +
-            "ORDER BY [t1].[ROW_NUMBER]",
-            aliasedSelection, ordering, selection, tableName, filter, query.skip, query.skip, query.take);
+            "SELECT %s " +
+            "FROM %s " +
+            "WHERE %s " +
+            "ORDER BY %s " +
+            "OFFSET %d ROWS FETCH NEXT %d ROWS ONLY",
+            selection, tableName, filter, ordering, query.skip,  query.take);
 
         return formattedSql;
     },
