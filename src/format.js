@@ -521,7 +521,6 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
             this.statement.sql += ')';
         }
         else if (functionName == 'concat') {
-            var concat;
             if (this.flavor !== 'sqlite') {
                 // Rewrite as an string addition with appropriate conversions.
                 // Note: due to sql operator precidence, we only need to inject a
