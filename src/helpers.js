@@ -3,8 +3,7 @@
 // ----------------------------------------------------------------------------
 
 var types = require('./utilities/types'),
-    strings = require('./utilities/strings'),
-    mssql = require('mssql');
+    strings = require('./utilities/strings');
 
 var helpers = module.exports = {
     // Performs the following validations on the specified identifier:
@@ -77,26 +76,6 @@ var helpers = module.exports = {
                 return "DATETIMEOFFSET(7)";
             default:
                 throw new Error("Unable to map value " + value.toString() + " to a SQL type.");
-        }
-    },
-
-    getMssqlType: function (value, primaryKey) {
-        switch (value !== undefined && value !== null && value.constructor) {
-            case String:
-                return primaryKey ? mssql.NVarChar(255) : mssql.NVarChar();
-            case Number:
-                return primaryKey || isInteger(value) ? mssql.Int : mssql.Float;
-            case Boolean:
-                return mssql.Bit;
-            case Date:
-                return mssql.DateTimeOffset;
-            case Buffer:
-                return mssql.VarBinary;
-        }
-
-        function isInteger(value) {
-            // integers larger than the maximum value get inserted as 1 - treat these as float parameters as a workaround
-            return value.toFixed() === value.toString() && value < 2147483648 && value > -2147483648;
         }
     },
 

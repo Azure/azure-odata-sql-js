@@ -9,8 +9,7 @@ var types = require('./utilities/types'),
     convertTypes = require('./convertTypes'),
     booleanize = require('./booleanize'),
     helpers = require('./helpers'),
-    expressions = require('./expressions'),
-    mssql = require('mssql');
+    expressions = require('./expressions');
 
 function ctor(tableConfig) {
     this.tableConfig = tableConfig || {};
@@ -352,7 +351,7 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
             return expr;
         }
 
-        this.statement.sql += this._createParameter(expr.value, mssql.FLOAT);
+        this.statement.sql += this._createParameter(expr.value, 'float');
 
         return expr;
     },
