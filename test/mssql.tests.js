@@ -2,8 +2,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // ----------------------------------------------------------------------------
 var formatSql = require('../src/format'),
-    equal = require('assert').equal,
-    mssql = require('mssql');
+    equal = require('assert').equal;
 
 describe('azure-odata-sql.mssql', function () {
     it("preserves float parameters with zeroes", function () {
@@ -13,7 +12,7 @@ describe('azure-odata-sql.mssql', function () {
         },
             statements = formatSql(query, { schema: 'testapp'});
         equal(statements.length, 1);
-        equal(statements[0].parameters[1].type, mssql.FLOAT);
+        equal(statements[0].parameters[1].type, 'float');
     });
 
     it("correctly handles null take", function () {
