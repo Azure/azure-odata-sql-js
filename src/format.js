@@ -558,9 +558,9 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
         else if (functionName == 'indexof') {
             if (this.flavor === 'sqlite') {
                 this.statement.sql += "(INSTR(";
-                this.visit(args[0]);
-                this.statement.sql += ", ";
                 this.visit(instance);
+                this.statement.sql += ", ";
+                this.visit(args[0]);
                 this.statement.sql += ') - 1)';
             } else {
                 this.statement.sql += "(PATINDEX('%' + ";
