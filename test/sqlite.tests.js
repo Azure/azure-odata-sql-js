@@ -511,7 +511,7 @@ describe('azure-odata-sql.sqlite', function () {
             table: 'products',
             filters: "indexof(name, 'Abc') eq 5"
         };
-        var statements = verifySqlFormatting(query, "SELECT * FROM [products] WHERE ((INSTR(@p1, [name]) - 1) = @p2)");
+        var statements = verifySqlFormatting(query, "SELECT * FROM [products] WHERE ((INSTR([name], @p1) - 1) = @p2)");
         equal(statements.length, 1);
         equal(statements[0].parameters[0].value, 'Abc');
         equal(statements[0].parameters[1].value, 5);
