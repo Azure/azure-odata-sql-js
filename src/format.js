@@ -480,7 +480,7 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
     _formatMappedStringMember: function (instance, mappedMemberInfo, args) {
         var functionName = mappedMemberInfo.memberName;
 
-        if (functionName == 'substringof') {
+        if (functionName == 'substringof' || functionName == 'contains') {
             this.statement.sql += '(';
             this.visit(instance);
 
