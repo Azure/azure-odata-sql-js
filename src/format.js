@@ -480,7 +480,20 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
     _formatMappedStringMember: function (instance, mappedMemberInfo, args) {
         var functionName = mappedMemberInfo.memberName;
 
-        if (functionName == 'substringof' || functionName == 'contains') {
+        if (functionName == 'substringof') {
+            this.statement.sql += '(';
+            this.visit(instance);
+
+            this.statement.sql += ' LIKE ';
+
+            // form '%' + <arg> + '%'
+            this.statement.sql += "('%' + ";
+            this.visit(args[0]);
+            this.statement.sql += " + '%')";
+
+            this.statement.sql += ')';
+        } 
+        else if (functionName == 'contains') {
             this.statement.sql += '(';
             this.visit(instance);
 

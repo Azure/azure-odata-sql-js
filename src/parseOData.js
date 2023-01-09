@@ -290,6 +290,7 @@ var ODataParser = types.defineClass(ctor, {
                 this._validateFunctionParameters(functionName, functionArgs, 1);
                 break;
             case 'substringof':
+            case 'contains':
             case 'startswith':
             case 'endswith':
             case 'concat':
@@ -371,6 +372,9 @@ var ODataParser = types.defineClass(ctor, {
         else if (functionName == 'endswith') {
             return new expressions.MappedMemberInfo('string', functionName, false, true);
         }
+        else if (functionName == 'contains') {
+            return new expressions.MappedMemberInfo('string', functionName, false, true);
+        }
         else if (functionName == 'length') {
             return new expressions.MappedMemberInfo('string', functionName, false, false);
         }
@@ -383,7 +387,7 @@ var ODataParser = types.defineClass(ctor, {
         else if (functionName == 'trim') {
             return new expressions.MappedMemberInfo('string', functionName, false, true);
         }
-        else if (functionName == 'substringof' || functionName == 'contains') {
+        else if (functionName == 'substringof') {
             var memberInfo = new expressions.MappedMemberInfo('string', functionName, false, true);
             memberInfo.mapParams = function (args) {
                 // reverse the order of arguments for string.Contains
