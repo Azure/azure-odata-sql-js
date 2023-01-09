@@ -1,6 +1,6 @@
 {
   "name": "azure-odata-sql",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Convert OData queries into SQL statements",
   "main": "src/index.js",
   "author": "Microsoft",
