@@ -371,6 +371,9 @@ var ODataParser = types.defineClass(ctor, {
         else if (functionName == 'endswith') {
             return new expressions.MappedMemberInfo('string', functionName, false, true);
         }
+        else if (functionName == 'contains') {
+            return new expressions.MappedMemberInfo('string', functionName, false, true);
+        }
         else if (functionName == 'length') {
             return new expressions.MappedMemberInfo('string', functionName, false, false);
         }
