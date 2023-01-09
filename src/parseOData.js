@@ -371,9 +371,6 @@ var ODataParser = types.defineClass(ctor, {
         else if (functionName == 'endswith') {
             return new expressions.MappedMemberInfo('string', functionName, false, true);
         }
-        else if (functionName == 'contains') {
-            return new expressions.MappedMemberInfo('string', functionName, false, true);
-        }
         else if (functionName == 'length') {
             return new expressions.MappedMemberInfo('string', functionName, false, false);
         }
@@ -386,7 +383,7 @@ var ODataParser = types.defineClass(ctor, {
         else if (functionName == 'trim') {
             return new expressions.MappedMemberInfo('string', functionName, false, true);
         }
-        else if (functionName == 'substringof') {
+        else if (functionName == 'substringof' || functionName == 'contains') {
             var memberInfo = new expressions.MappedMemberInfo('string', functionName, false, true);
             memberInfo.mapParams = function (args) {
                 // reverse the order of arguments for string.Contains
