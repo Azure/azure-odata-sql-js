@@ -110,6 +110,7 @@ function isBooleanExpression(expr) {
         switch (expr.memberInfo.memberName) {
             case 'startswith':
             case 'endswith':
+            case 'contains':
             case 'substringof':
                 return true;
             default:

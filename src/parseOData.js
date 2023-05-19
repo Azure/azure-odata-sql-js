@@ -290,6 +290,7 @@ var ODataParser = types.defineClass(ctor, {
                 this._validateFunctionParameters(functionName, functionArgs, 1);
                 break;
             case 'substringof':
+            case 'contains':
             case 'startswith':
             case 'endswith':
             case 'concat':
@@ -369,6 +370,9 @@ var ODataParser = types.defineClass(ctor, {
             return new expressions.MappedMemberInfo('string', functionName, false, true);
         }
         else if (functionName == 'endswith') {
+            return new expressions.MappedMemberInfo('string', functionName, false, true);
+        }
+        else if (functionName == 'contains') {
             return new expressions.MappedMemberInfo('string', functionName, false, true);
         }
         else if (functionName == 'length') {

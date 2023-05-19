@@ -492,6 +492,19 @@ var SqlFormatter = types.deriveClass(ExpressionVisitor, ctor, {
             this.statement.sql += " + '%')";
 
             this.statement.sql += ')';
+        } 
+        else if (functionName == 'contains') {
+            this.statement.sql += '(';
+            this.visit(instance);
+
+            this.statement.sql += ' LIKE ';
+
+            // form '%' + <arg> + '%'
+            this.statement.sql += "('%' + ";
+            this.visit(args[0]);
+            this.statement.sql += " + '%')";
+
+            this.statement.sql += ')';
         }
         else if (functionName == 'startswith') {
             this.statement.sql += '(';
